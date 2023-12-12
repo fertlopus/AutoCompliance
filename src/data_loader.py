@@ -38,7 +38,7 @@ def preprocess_data(chunk: pd.DataFrame) -> pd.DataFrame:
         raise RuntimeError(f"Error preprocessing data chunk {chunk}: {e}")
 
 
-def split_data(data: pd.DataFrame, test_size: float = 0.2):
+def split_data(X, y, test_size = 0.2):
     """
     Split the dataset into training and testing sets.
 
@@ -50,6 +50,6 @@ def split_data(data: pd.DataFrame, test_size: float = 0.2):
     Tuple[pd.DataFrame, pd.DataFrame]: The training and testing datasets.
     """
     try:
-        return train_test_split(data, test_size = test_size, random_state = 42)
+        return train_test_split(X, y, test_size = test_size, random_state = 42)
     except Exception as e:
         raise RuntimeError(f"Error splitting data: {e}")

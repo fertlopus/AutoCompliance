@@ -20,7 +20,8 @@ def main():
 
         if args.predict:
             # TODO: Hardcoded path need to change
-            predictor = EmailPredictor('./../model_artifacts/lr/lr_email.pkl')
+            predictor = EmailPredictor('./../model_artifacts/lr/email_classifier.pkl',
+                                       "./../model_artifacts/lr/tfidf_vectorizer.pkl")
             prediction = predictor.predict(args.predict)
             logger.info(f"Predicted category: {prediction}")
 

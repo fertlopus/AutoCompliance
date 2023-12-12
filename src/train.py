@@ -4,6 +4,7 @@ from data_loader import load_data_in_chunks, preprocess_data, split_data
 from utils import feature_extraction
 from model import EmailClassifier
 import pandas as pd
+from joblib import dump
 import mlflow
 
 
@@ -20,17 +21,32 @@ def main():
 
         # Feature extraction
         logger.info("Extracting features...")
-        X, y = feature_extraction(processed_data['narrative']), processed_data['product']
+
+        tfidf_vectorizer, features_df = feature_extraction(processed_data['narrative'])
+        dump(tfidf_vectorizer, "../model_artifacts/lr/tfidf_vectorizer.pkl")
+
+        # Separate features and labels
+        X = features_df  # Features from TF-IDF
+        y = processed_data['product']  # Labels
+
+        # print("X type:", type(X))
+        # print("X shape:", X.shape)
+        # print("y type:", type(y))
+        # print("y shape:", y.shape)
+
+        # full_data = pd.concat([features_df, processed_data['product'].reset_index(drop = True)], axis = 1)
+        # X, y = feature_extraction(processed_data['narrative']), processed_data['product']
 
         # Split data
         X_train, X_test, y_train, y_test = split_data(X, y)
 
         # MLflow tracking
+        mlflow.set_tracking_uri("file:///mlruns") # mlflow ui --backend-store-uri file:///mlruns
         mlflow.set_experiment("Email_Classification_LR")
         with mlflow.start_run():
             logger.info("Training model...")
-            classifier = EmailClassifier()
-            classifier.train(X_train, y_train)
+            classifier = EmailClassifier(max_iter=1000)
+            classifier.train(X_train, y_train, save_path = "./../model_artifacts/lr/email_classifier.pkl")
 
             # Log parameters, metrics, and model
             mlflow.log_params(classifier.get_params())

@@ -9,7 +9,7 @@ class EmailPredictor:
     A class for handling the loading and inference of the email classification model.
     """
 
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str, vectorizer_path: str) -> None:
         """
         Initialize the EmailPredictor with the path to the trained model.
 
@@ -18,6 +18,7 @@ class EmailPredictor:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         self.model = self._load_model(model_path)
+        self.vectorizer = self._load_vectorizer(vectorizer_path)
 
     def _load_model(self, model_path: str) -> EmailClassifier:
         """
@@ -35,6 +36,13 @@ class EmailPredictor:
             self.logger.error(f"Failed to load model from {model_path}: {e}")
             raise
 
+    def _load_vectorizer(self, vectorizer_path: str):
+        try:
+            return joblib.load(vectorizer_path)
+        except Exception as e:
+            self.logger.error(f"Failed to load vectorizer from {vectorizer_path}: {e}")
+            raise
+
     def preprocess_input(self, text: str) -> pd.DataFrame:
         """
         Preprocess the input text for prediction.
@@ -47,8 +55,8 @@ class EmailPredictor:
         """
         try:
             # TODO: Implement preprocessing steps similar to those used during training
-            processed_text = text.lower()
-            return pd.DataFrame([processed_text], columns=['text'])
+            processed_text = self.vectorizer.transform([text])
+            return pd.DataFrame(processed_text.toarray())
         except Exception as e:
             self.logger.error(f"Preprocessing failed for text: {text}: {e}")
             raise

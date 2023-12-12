@@ -3,7 +3,7 @@ import joblib
 import os
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from typing import Any, Dict, Optional, Tuple
 
 
@@ -66,23 +66,14 @@ class EmailClassifier:
             self.logger.error(f"Prediction failed: {e}")
             raise
 
-    def evaluate(self, X_test: Any, y_test: Any) -> Dict[str, Any]:
-        """
-        Evaluate the model's performance on the test set.
-
-        Args:
-        X_test: Feature data for testing.
-        y_test: True labels for testing.
-
-        Returns:
-        A dictionary containing accuracy and classification report.
-        """
+    def evaluate(self, X_test: Any, y_test: Any) -> Dict[str, float]:
         try:
             predictions = self.predict(X_test)
             accuracy = accuracy_score(y_test, predictions)
-            report = classification_report(y_test, predictions)
-            self._log_model_metrics(X_test, y_test, "Testing")
-            return {"accuracy": accuracy, "report": report}
+            precision = precision_score(y_test, predictions, average='weighted')
+            recall = recall_score(y_test, predictions, average='weighted')
+            f1 = f1_score(y_test, predictions, average='weighted')
+            return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
         except Exception as e:
             self.logger.error(f"Evaluation failed: {e}")
             raise
