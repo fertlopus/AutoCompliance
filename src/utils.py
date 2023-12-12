@@ -5,7 +5,7 @@ from gensim.models import Word2Vec
 from typing import List, Tuple
 
 
-def feature_extraction(texts: pd.Series, max_features: int = 1000) -> Tuple[TfidfVectorizer, pd.DataFrame]:
+def feature_extraction(texts: pd.Series, max_features: int = 1000):
     """
     Perform TF-IDF feature extraction on the dataset.
 

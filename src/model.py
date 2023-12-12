@@ -119,3 +119,12 @@ class EmailClassifier:
         predictions = self.predict(X)
         accuracy = accuracy_score(y, predictions)
         self.logger.info(f"{phase} Accuracy: {accuracy}")
+
+    def get_params(self) -> dict:
+        """
+        Get parameters of the Logistic Regression model.
+
+        Returns:
+        dict: The parameters of the model.
+        """
+        return self.model.get_params()
