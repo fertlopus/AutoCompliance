@@ -4,6 +4,7 @@ from data_loader import load_data_in_chunks, preprocess_data, split_data
 from utils import feature_extraction
 from model import EmailClassifier
 import pandas as pd
+from datetime import datetime
 from joblib import dump
 import mlflow
 
@@ -29,14 +30,6 @@ def main():
         X = features_df  # Features from TF-IDF
         y = processed_data['product']  # Labels
 
-        # print("X type:", type(X))
-        # print("X shape:", X.shape)
-        # print("y type:", type(y))
-        # print("y shape:", y.shape)
-
-        # full_data = pd.concat([features_df, processed_data['product'].reset_index(drop = True)], axis = 1)
-        # X, y = feature_extraction(processed_data['narrative']), processed_data['product']
-
         # Split data
         X_train, X_test, y_train, y_test = split_data(X, y)
 
@@ -46,14 +39,12 @@ def main():
         with mlflow.start_run():
             logger.info("Training model...")
             classifier = EmailClassifier(max_iter=1000)
-            classifier.train(X_train, y_train, save_path = "./../model_artifacts/lr/email_classifier.pkl")
-
+            classifier.train(X_train, y_train, save_path = f"./../model_artifacts/lr/email_classifier_{datetime.now()}.pkl")
             # Log parameters, metrics, and model
             mlflow.log_params(classifier.get_params())
             metrics = classifier.evaluate(X_test, y_test)
             mlflow.log_metrics(metrics)
             mlflow.sklearn.log_model(classifier.model, "model")
-
             logger.info(f"Model evaluation metrics: {metrics}")
 
     except Exception as e:

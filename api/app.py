@@ -25,7 +25,6 @@ def predict_email_category(email: EmailText):
         # Make a prediction
         prediction = predictor.predict(email.text)
         end_time = datetime.now()
-
         # Log the request and response details
         logger.info(f"Request received at {start_time}, Response sent at {end_time}, Prediction: {prediction}")
         return {"prediction": prediction}

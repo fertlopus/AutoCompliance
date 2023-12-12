@@ -18,10 +18,8 @@ def feature_extraction(texts: pd.Series, max_features: int = 1000):
     """
     tfidf_vectorizer = TfidfVectorizer(max_features = max_features)
     features = tfidf_vectorizer.fit_transform(texts)
-
     # Convert to DataFrame for easier handling
     features_df = pd.DataFrame(features.toarray(), columns = tfidf_vectorizer.get_feature_names_out())
-
     return tfidf_vectorizer, features_df
 
 

@@ -1,3 +1,4 @@
+# use a chron job to periodically validate the inference and monitor the model's health
 import logging
 from datetime import datetime
 import pandas as pd
