@@ -20,11 +20,16 @@ def main():
         data_chunks = load_data_in_chunks('./../data/raw/complaints_processed.csv')
         processed_data = pd.concat([preprocess_data(chunk) for chunk in data_chunks])
 
+        # Generate a timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        model_filename = f"email_classifier_{timestamp}.pkl"
+        vectorizer_filename = f"tfidf_vectorizer_{timestamp}.pkl"
+
         # Feature extraction
         logger.info("Extracting features...")
 
         tfidf_vectorizer, features_df = feature_extraction(processed_data['narrative'])
-        dump(tfidf_vectorizer, "../model_artifacts/lr/tfidf_vectorizer.pkl")
+        dump(tfidf_vectorizer, f"../model_artifacts/lr/{vectorizer_filename}")
 
         # Separate features and labels
         X = features_df  # Features from TF-IDF
@@ -39,7 +44,7 @@ def main():
         with mlflow.start_run():
             logger.info("Training model...")
             classifier = EmailClassifier(max_iter=1000)
-            classifier.train(X_train, y_train, save_path = f"./../model_artifacts/lr/email_classifier_{datetime.now()}.pkl")
+            classifier.train(X_train, y_train, save_path = f"./../model_artifacts/lr/{model_filename}")
             # Log parameters, metrics, and model
             mlflow.log_params(classifier.get_params())
             metrics = classifier.evaluate(X_test, y_test)
