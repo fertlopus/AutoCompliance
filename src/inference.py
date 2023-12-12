@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-from model import EmailClassifier
+from .model import EmailClassifier
 import joblib
 
 
