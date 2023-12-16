@@ -4,7 +4,7 @@ from src.inference import EmailPredictor
 
 def classify_email(text):
     # Load  model (Ensure the model and vectorizer are correctly loaded)
-    predictor = EmailPredictor('./model_artifacts/lr/email_classifier.pkl',
+    predictor = EmailPredictor('../model_artifacts/lr/email_classifier.pkl',
                                './model_artifacts/lr/tfidf_vectorizer.pkl')
     prediction = predictor.predict(text)
     return prediction
